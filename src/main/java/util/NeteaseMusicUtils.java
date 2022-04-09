@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * @author JackuXL
  */
-public class NetWorkUtil {
+public class NeteaseMusicUtils {
     public static String domain;
 
     /**
@@ -19,8 +19,8 @@ public class NetWorkUtil {
      *
      * @param domain 主域名（格式：http(s)://example.com）
      */
-    public static void setDomain(String domain) {
-        NetWorkUtil.domain = domain;
+    public static void setApiDomain(String domain) {
+        NeteaseMusicUtils.domain = domain;
     }
 
     /**
@@ -34,17 +34,18 @@ public class NetWorkUtil {
         if (cookie == null) {
             cookie = "";
         }
+        String urlWithDomain = NeteaseMusicUtils.domain + url;
         String result;
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request;
         request = new Request.Builder()
                 .addHeader("Cookie", cookie)
-                .url(NetWorkUtil.domain + url)
+                .url(urlWithDomain)
                 .build();
         Response response;
         try {
             response = client.newCall(request).execute();
-            result = Objects.requireNonNull(response.body()).string();
+            result = Objects.requireNonNull(response.body(), "Receive empty body when requesting "+urlWithDomain).string();
             return result;
         } catch (IOException e) {
             e.printStackTrace();

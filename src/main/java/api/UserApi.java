@@ -2,11 +2,13 @@ package api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import util.NetWorkUtil;
+import util.NeteaseMusicUtils;
+import util.TestUtils;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class UserApi {
     private JSONObject userInfo;
@@ -23,11 +25,33 @@ public class UserApi {
         key = null;
     }
 
+    private static final int[] BAD_STATUS_CODES = {401, 502};
+
+    public static UserApi loginByEmail(String email, String password, boolean pwdMd5Encoded) {
+        UserApi api = new UserApi();
+        api.setEmail(email);
+        api.setPassword(password, pwdMd5Encoded);
+        if(Arrays.stream(BAD_STATUS_CODES).anyMatch(TestUtils.apply(api.login(), System.out::println)::equals)) {
+            throw new IllegalStateException("Login failed for bad status code");
+        }
+        return api;
+    }
+
+    public static UserApi loginByPhone(String phoneNumber, String password, boolean pwdMd5Encoded) {
+        UserApi api = new UserApi();
+        api.setPhoneNumber(phoneNumber);
+        api.setPassword(password, pwdMd5Encoded);
+        if(Arrays.stream(BAD_STATUS_CODES).anyMatch(TestUtils.apply(api.login(), System.out::println)::equals)) {
+            throw new IllegalStateException("Login failed for bad status code");
+        }
+        return api;
+    }
+
     /**
-     * µÇÂ¼
-     * ×Ô¶¯Ê¶±ğÒÑÌîĞ´ĞÅÏ¢Ñ¡Ôñ·½Ê½
+     * ç™»å½•
+     * è‡ªåŠ¨è¯†åˆ«å·²å¡«å†™ä¿¡æ¯é€‰æ‹©æ–¹å¼
      *
-     * @return ×´Ì¬Âë
+     * @return çŠ¶æ€ç 
      */
     public int login() {
         if (password == null) {
@@ -43,16 +67,16 @@ public class UserApi {
     }
 
     /**
-     * Í¨¹ıÊÖ»úºÅµÇÂ¼
-     * ÇëÔÚµÇÂ¼Ç°ÊÖ¶¯ÉèÖÃÃÜÂë¼°ÊÖ»úºÅ
+     * é€šè¿‡æ‰‹æœºå·ç™»å½•
+     * è¯·åœ¨ç™»å½•å‰æ‰‹åŠ¨è®¾ç½®å¯†ç åŠæ‰‹æœºå·
      *
-     * @return ×´Ì¬Âë
+     * @return çŠ¶æ€ç 
      */
     public int loginByPhoneNumber() {
         if (password == null || phoneNumber == null) {
             return 401;
         }
-        String result = NetWorkUtil.sendByGetUrl(String.format("/login/cellphone?phone=%s&md5_password=%s", phoneNumber, password), null);
+        String result = NeteaseMusicUtils.sendByGetUrl(String.format("/login/cellphone?phone=%s&md5_password=%s", phoneNumber, password), null);
         if (result == null) {
             return -1;
         }
@@ -61,16 +85,16 @@ public class UserApi {
     }
 
     /**
-     * Í¨¹ıÊÖ»úºÅµÇÂ¼
-     * ÇëÔÚµÇÂ¼Ç°ÊÖ¶¯ÉèÖÃÃÜÂë¼°ÓÊÏä
+     * é€šè¿‡æ‰‹æœºå·ç™»å½•
+     * è¯·åœ¨ç™»å½•å‰æ‰‹åŠ¨è®¾ç½®å¯†ç åŠé‚®ç®±
      *
-     * @return ×´Ì¬Âë
+     * @return çŠ¶æ€ç 
      */
     public int loginByEmail() {
         if (password == null || email == null) {
             return 401;
         }
-        String result = NetWorkUtil.sendByGetUrl(String.format("/login?email=%s&md5_password=%s", email, password), null);
+        String result = NeteaseMusicUtils.sendByGetUrl(String.format("/login?email=%s&md5_password=%s", email, password), null);
         if (result == null) {
             return -1;
         }
@@ -79,31 +103,31 @@ public class UserApi {
     }
 
     /**
-     * ÉèÖÃÊÖ»úºÅÂë
-     * ÇëÔÚÊ¹ÓÃÊÖ»úµÇÂ¼Ç°Ö´ĞĞ
+     * è®¾ç½®æ‰‹æœºå·ç 
+     * è¯·åœ¨ä½¿ç”¨æ‰‹æœºç™»å½•å‰æ‰§è¡Œ
      *
-     * @param phoneNumber ÊÖ»úºÅÂë£¨+86£©
+     * @param phoneNumber æ‰‹æœºå·ç ï¼ˆ+86ï¼‰
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     /**
-     * ÉèÖÃÓÊÏä
-     * ÇëÔÚÊ¹ÓÃÓÊÏäµÇÂ¼Ç°Ö´ĞĞ
+     * è®¾ç½®é‚®ç®±
+     * è¯·åœ¨ä½¿ç”¨é‚®ç®±ç™»å½•å‰æ‰§è¡Œ
      *
-     * @param email ÓÊÏä
+     * @param email é‚®ç®±
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * ÉèÖÃÃÜÂë
-     * ÇëÔÚµÇÂ¼Ç°Ö´ĞĞ
+     * è®¾ç½®å¯†ç 
+     * è¯·åœ¨ç™»å½•å‰æ‰§è¡Œ
      *
-     * @param password ÃÜÂë
-     * @param md5      ÊÇ·ñÒÑ½øĞĞmd5¼ÓÃÜ£¨ÈôÎª·ñÔò×Ô¶¯¼ÓÃÜ£©
+     * @param password å¯†ç 
+     * @param md5      æ˜¯å¦å·²è¿›è¡Œmd5åŠ å¯†ï¼ˆè‹¥ä¸ºå¦åˆ™è‡ªåŠ¨åŠ å¯†ï¼‰
      */
     public void setPassword(String password, Boolean md5) {
         if (!md5) {
@@ -114,7 +138,7 @@ public class UserApi {
     }
 
     /**
-     * ÉèÖÃCookie
+     * è®¾ç½®Cookie
      *
      * @param cookie cookie
      */
@@ -123,12 +147,12 @@ public class UserApi {
     }
 
     /**
-     * ÉêÇë¶şÎ¬ÂëÃÜÔ¿
+     * ç”³è¯·äºŒç»´ç å¯†é’¥
      *
-     * @return ÊÇ·ñ»ñÈ¡³É¹¦
+     * @return æ˜¯å¦è·å–æˆåŠŸ
      */
     public Boolean getKey() {
-        String result = NetWorkUtil.sendByGetUrl("/login/qr/key?timestamp=" + System.currentTimeMillis(), null);
+        String result = NeteaseMusicUtils.sendByGetUrl("/login/qr/key?timestamp=" + System.currentTimeMillis(), null);
         if (result == null || JSON.parseObject(result).getJSONObject("data").getString("unikey") == null) {
             return false;
         } else {
@@ -138,12 +162,12 @@ public class UserApi {
     }
 
     /**
-     * ´´½¨¶şÎ¬Âë
+     * åˆ›å»ºäºŒç»´ç 
      *
-     * @return base64¶şÎ¬Âë
+     * @return base64äºŒç»´ç 
      */
     public String createQRCode() {
-        String result = NetWorkUtil.sendByGetUrl(String.format("/login/qr/create?key=%s&qrimg=1&timestamp=" + System.currentTimeMillis(), key), null);
+        String result = NeteaseMusicUtils.sendByGetUrl(String.format("/login/qr/create?key=%s&qrimg=1&timestamp=" + System.currentTimeMillis(), key), null);
         if (result == null || JSON.parseObject(result).getJSONObject("data").getString("qrimg") == null) {
             return null;
         } else {
@@ -152,12 +176,12 @@ public class UserApi {
     }
 
     /**
-     * ¼ì²é¶şÎ¬Âë×´Ì¬
+     * æ£€æŸ¥äºŒç»´ç çŠ¶æ€
      *
-     * @return ×´Ì¬Âë
+     * @return çŠ¶æ€ç 
      */
     public int checkQRStatus() {
-        String result = NetWorkUtil.sendByGetUrl(String.format("/login/qr/check?key=%s&timestamp=" + System.currentTimeMillis(), key), "");
+        String result = NeteaseMusicUtils.sendByGetUrl(String.format("/login/qr/check?key=%s&timestamp=" + System.currentTimeMillis(), key), "");
         if (result == null) {
             return -1;
         } else {
@@ -171,8 +195,8 @@ public class UserApi {
     }
 
     /**
-     * »ñÈ¡Cookie
-     * ÇëÏÈµÇÂ¼
+     * è·å–Cookie
+     * è¯·å…ˆç™»å½•
      *
      * @return cookie
      */
@@ -181,30 +205,30 @@ public class UserApi {
     }
 
     /**
-     * »ñÈ¡ÓÃ»§ĞÅÏ¢
-     * ÇëÏÈµÇÂ¼
+     * è·å–ç”¨æˆ·ä¿¡æ¯
+     * è¯·å…ˆç™»å½•
      *
-     * @return ÓÃ»§ĞÅÏ¢
+     * @return ç”¨æˆ·ä¿¡æ¯
      */
     public JSONObject getProfile() {
         if (userInfo.getString("profile") == null) {
-            return JSON.parseObject(NetWorkUtil.sendByGetUrl("/login/status", getCookie())).getJSONObject("data").getJSONObject("profile");
+            return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/login/status", getCookie())).getJSONObject("data").getJSONObject("profile");
         }
         return userInfo.getJSONObject("profile");
     }
 
     public JSONObject checkLogin() {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/login/status", getCookie())).getJSONObject("data");
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/login/status", getCookie())).getJSONObject("data");
     }
 
     public void logout() {
-        NetWorkUtil.sendByGetUrl("/logout", getCookie());
+        NeteaseMusicUtils.sendByGetUrl("/logout", getCookie());
     }
 
     /**
-     * md5¼ÓÃÜ
+     * md5åŠ å¯†
      *
-     * @param str ´ı¼ÓÃÜ×Ö·û´®
+     * @param str å¾…åŠ å¯†å­—ç¬¦ä¸²
      */
     public String encodeByMD5(String str) {
         byte[] secretBytes;

@@ -4,7 +4,7 @@ import cn.jackuxl.entity.Music;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import util.NetWorkUtil;
+import util.NeteaseMusicUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class MusicPanApi {
     }
 
     public List<Music> getMusicList() {
-        JSONArray data = JSON.parseObject(NetWorkUtil.sendByGetUrl("/user/cloud", cookie)).getJSONArray("data");
+        JSONArray data = JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/user/cloud", cookie)).getJSONArray("data");
         return data == null ? new ArrayList<>() : Music.toMusicArrayList(data);
     }
 
@@ -28,7 +28,7 @@ public class MusicPanApi {
      * @return 音乐信息
      */
     public List<Music> getMusicDetail(String id) {
-        return Music.toMusicArrayList(JSON.parseObject(NetWorkUtil.sendByGetUrl("/user/cloud/detail?id=" + id, cookie)).getJSONArray("songs"));
+        return Music.toMusicArrayList(JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/user/cloud/detail?id=" + id, cookie)).getJSONArray("songs"));
     }
 
     /**
@@ -45,7 +45,7 @@ public class MusicPanApi {
                 stringBuilder.append(",");
             }
         }
-        return Music.toMusicArrayList(JSON.parseObject(NetWorkUtil.sendByGetUrl("/user/cloud/detail?id=" + stringBuilder, cookie)).getJSONArray("songs"));
+        return Music.toMusicArrayList(JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/user/cloud/detail?id=" + stringBuilder, cookie)).getJSONArray("songs"));
     }
 
     /**
@@ -55,7 +55,7 @@ public class MusicPanApi {
      * @return 状态码
      */
     public int deleteMusic(Music music) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/user/cloud/del?id=" + music.getId(), cookie)).getInteger("code");
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/user/cloud/del?id=" + music.getId(), cookie)).getInteger("code");
     }
 
     /**
@@ -65,7 +65,7 @@ public class MusicPanApi {
      * @return 音乐链接
      */
     public String getMusicUrl(Music music) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/song/url?id=" + music.getId(), cookie))
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/song/url?id=" + music.getId(), cookie))
                 .getJSONArray("data").getJSONObject(0).getString("url");
 
     }
@@ -84,7 +84,7 @@ public class MusicPanApi {
                 stringBuilder.append(",");
             }
         }
-        JSONArray data = JSON.parseObject(NetWorkUtil.sendByGetUrl("/song/url?id=" + stringBuilder, cookie)).getJSONArray("data");
+        JSONArray data = JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/song/url?id=" + stringBuilder, cookie)).getJSONArray("data");
         String[] result = new String[data.size()];
         for (int i = 0; i < data.size(); i++) {
             JSONObject tmp = data.getJSONObject(i);

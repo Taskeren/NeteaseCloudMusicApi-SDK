@@ -1,7 +1,7 @@
 package api;
 
 import com.alibaba.fastjson.JSON;
-import util.NetWorkUtil;
+import util.NeteaseMusicUtils;
 
 public class MVApi {
     private final String cookie;
@@ -11,7 +11,7 @@ public class MVApi {
     }
 
     public String getMVUrl(String mvId) {
-        String obj = NetWorkUtil.sendByGetUrl("/mv/url?id=" + mvId, cookie);
+        String obj = NeteaseMusicUtils.sendByGetUrl("/mv/url?id=" + mvId, cookie);
         System.out.println(obj);
         return JSON.parseObject(obj).getJSONObject("data").getString("url");
     }

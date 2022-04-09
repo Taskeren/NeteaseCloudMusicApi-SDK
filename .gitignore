@@ -3,3 +3,6 @@
 /build/
 /build/classes/java/main/
 /out/
+
+# 敏感信息
+src/test/java/cn/taskeren/music/test/SensitiveInfo.java

@@ -4,7 +4,7 @@ import cn.jackuxl.entity.Music;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import util.NetWorkUtil;
+import util.NeteaseMusicUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,22 +18,22 @@ public class MusicApi {
 
 
     /**
-     * »ñÈ¡Ë½ÈËFM
+     * è·å–ç§äººFM
      *
-     * @return FM·µ»ØµÄÒôÀÖÁĞ±í
+     * @return FMè¿”å›çš„éŸ³ä¹åˆ—è¡¨
      */
     public List<Music> getFM() {
-        return Music.toMusicArrayList(JSON.parseObject(NetWorkUtil.sendByGetUrl("/personal_fm", cookie)).getJSONArray("data"));
+        return Music.toMusicArrayList(JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/personal_fm", cookie)).getJSONArray("data"));
     }
 
     /**
-     * ËÑË÷ÒôÀÖ
+     * æœç´¢éŸ³ä¹
      *
-     * @param keyword ¹Ø¼ü´Ê
-     * @return ËÑË÷½á¹û
+     * @param keyword å…³é”®è¯
+     * @return æœç´¢ç»“æœ
      */
     public List<Music> searchMusic(String keyword) {
-        JSONObject content = JSON.parseObject(NetWorkUtil.sendByGetUrl("/search?keywords=" + keyword, cookie));
+        JSONObject content = JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/search?keywords=" + keyword, cookie));
         if (content.getJSONObject("result") == null) {
             return new ArrayList<>();
         }
@@ -41,12 +41,12 @@ public class MusicApi {
     }
 
     /**
-     * »ñÈ¡ÈÈËÑ
+     * è·å–çƒ­æœ
      *
-     * @return ÈÈËÑ¹Ø¼ü´ÊÁĞ±í
+     * @return çƒ­æœå…³é”®è¯åˆ—è¡¨
      */
     public JSONArray getHot() {
-        String result = NetWorkUtil.sendByGetUrl("/search/hot", cookie);
+        String result = NeteaseMusicUtils.sendByGetUrl("/search/hot", cookie);
         if (result == null) {
             return new JSONArray();
         }
@@ -54,20 +54,20 @@ public class MusicApi {
     }
 
     /**
-     * »ñÈ¡ÒôÀÖĞÅÏ¢
+     * è·å–éŸ³ä¹ä¿¡æ¯
      *
-     * @param id ÒôÀÖid
-     * @return ÒôÀÖĞÅÏ¢
+     * @param id éŸ³ä¹id
+     * @return éŸ³ä¹ä¿¡æ¯
      */
     public List<Music> getMusicDetail(String id) {
-        return Music.toMusicArrayList(JSON.parseObject(NetWorkUtil.sendByGetUrl("/song/detail?ids=" + id, cookie)).getJSONArray("songs"));
+        return Music.toMusicArrayList(JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/song/detail?ids=" + id, cookie)).getJSONArray("songs"));
     }
 
     /**
-     * »ñÈ¡ÒôÀÖĞÅÏ¢£¨ÅúÁ¿£©
+     * è·å–éŸ³ä¹ä¿¡æ¯ï¼ˆæ‰¹é‡ï¼‰
      *
-     * @param ids ÒôÀÖidÁĞ±í
-     * @return ÒôÀÖĞÅÏ¢
+     * @param ids éŸ³ä¹idåˆ—è¡¨
+     * @return éŸ³ä¹ä¿¡æ¯
      */
     public List<Music> getMusicDetail(String[] ids) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -77,37 +77,37 @@ public class MusicApi {
                 stringBuilder.append(",");
             }
         }
-        return Music.toMusicArrayList(JSON.parseObject(NetWorkUtil.sendByGetUrl("/song/detail?ids=" + stringBuilder, cookie)).getJSONArray("songs"));
+        return Music.toMusicArrayList(JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/song/detail?ids=" + stringBuilder, cookie)).getJSONArray("songs"));
     }
 
     /**
-     * »ñÈ¡×¨¼­·âÃæ
+     * è·å–ä¸“è¾‘å°é¢
      *
-     * @param albumId ×¨¼­id
-     * @return ·âÃæÁ´½Ó
+     * @param albumId ä¸“è¾‘id
+     * @return å°é¢é“¾æ¥
      */
     public String getMusicCover(String albumId) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/album?id=" + albumId, cookie))
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/album?id=" + albumId, cookie))
                 .getJSONArray("songs").getJSONObject(0).getJSONObject("al").getString("picUrl");
     }
 
     /**
-     * »ñÈ¡ÒôÀÖÁ´½Ó
+     * è·å–éŸ³ä¹é“¾æ¥
      *
-     * @param id ÒôÀÖid
-     * @return ÒôÀÖÁ´½Ó
+     * @param id éŸ³ä¹id
+     * @return éŸ³ä¹é“¾æ¥
      */
     public String getMusicUrl(String id) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/song/url?id=" + id, cookie))
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/song/url?id=" + id, cookie))
                 .getJSONArray("data").getJSONObject(0).getString("url");
 
     }
 
     /**
-     * »ñÈ¡ÒôÀÖÁ´½Ó£¨ÅúÁ¿£©
+     * è·å–éŸ³ä¹é“¾æ¥ï¼ˆæ‰¹é‡ï¼‰
      *
-     * @param ids ÒôÀÖid
-     * @return ÒôÀÖÁ´½Ó
+     * @param ids éŸ³ä¹id
+     * @return éŸ³ä¹é“¾æ¥
      */
     public String[] getMusicUrl(String[] ids) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -117,7 +117,7 @@ public class MusicApi {
                 stringBuilder.append(",");
             }
         }
-        JSONArray data = JSON.parseObject(NetWorkUtil.sendByGetUrl("/song/url?id=" + stringBuilder, cookie)).getJSONArray("data");
+        JSONArray data = JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/song/url?id=" + stringBuilder, cookie)).getJSONArray("data");
         String[] result = new String[data.size()];
         for (int i = 0; i < data.size(); i++) {
             JSONObject tmp = data.getJSONObject(i);
@@ -136,60 +136,60 @@ public class MusicApi {
     }
 
     /**
-     * »ñÈ¡¸è´Ê
+     * è·å–æ­Œè¯
      *
-     * @param id ÒôÀÖid
-     * @return ¸è´Ê
+     * @param id éŸ³ä¹id
+     * @return æ­Œè¯
      */
     public String getMusicLyric(String id) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/lyric?id=" + id, cookie))
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/lyric?id=" + id, cookie))
                 .getJSONObject("lrc").getString("lyric");
     }
 
     /**
-     * Ï²»¶ÒôÀÖ
+     * å–œæ¬¢éŸ³ä¹
      *
-     * @param id ÒôÀÖid
-     * @return ÊÇ·ñ³É¹¦
+     * @param id éŸ³ä¹id
+     * @return æ˜¯å¦æˆåŠŸ
      */
     public Boolean likeMusic(String id, Boolean like) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl(String.format("/like?id=%s&timestamp=%s&like=%b", id, System.currentTimeMillis(),like), cookie)).getInteger("code") == 200;
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl(String.format("/like?id=%s&timestamp=%s&like=%b", id, System.currentTimeMillis(),like), cookie)).getInteger("code") == 200;
     }
 
     /**
-     * »ñÈ¡ÈÈÆÀ
+     * è·å–çƒ­è¯„
      *
-     * @param id ÒôÀÖid
-     * @return ÈÈÆÀÁĞ±í
+     * @param id éŸ³ä¹id
+     * @return çƒ­è¯„åˆ—è¡¨
      */
     public JSONArray getHotComment(String id) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl("/comment/music?id=" + id, cookie)).getJSONArray("hotComments");
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl("/comment/music?id=" + id, cookie)).getJSONArray("hotComments");
     }
 
     /**
-     * ·¢ËÍÆÀÂÛ
+     * å‘é€è¯„è®º
      *
-     * @param id      ÒôÀÖid
-     * @param content ÄÚÈİ
-     * @return ÊÇ·ñ³É¹¦
+     * @param id      éŸ³ä¹id
+     * @param content å†…å®¹
+     * @return æ˜¯å¦æˆåŠŸ
      */
     public Boolean sendComment(String id, String content) {
-        return JSON.parseObject(NetWorkUtil.sendByGetUrl(String.format("/comment?t=1&type=0&id=%s&content=%s", id, content), cookie)).getInteger("code") == 200;
+        return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl(String.format("/comment?t=1&type=0&id=%s&content=%s", id, content), cookie)).getInteger("code") == 200;
     }
 
     /**
-     * µãÔŞÆÀÂÛ
+     * ç‚¹èµè¯„è®º
      *
-     * @param id   ×ÊÔ´id
-     * @param cid  ÆÀÂÛid
-     * @param like ÊÇ·ñµãÔŞ
-     * @return ÊÇ·ñ³É¹¦
+     * @param id   èµ„æºid
+     * @param cid  è¯„è®ºid
+     * @param like æ˜¯å¦ç‚¹èµ
+     * @return æ˜¯å¦æˆåŠŸ
      */
     public Boolean likeComment(String id, String cid, Boolean like) {
         if (like) {
-            return JSON.parseObject(NetWorkUtil.sendByGetUrl(String.format("/comment/like?id=%s&cid=%s&t=1&type=1", id, cid), cookie)).getInteger("code") == 200;
+            return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl(String.format("/comment/like?id=%s&cid=%s&t=1&type=1", id, cid), cookie)).getInteger("code") == 200;
         } else {
-            return JSON.parseObject(NetWorkUtil.sendByGetUrl(String.format("/comment/like?id=%s&cid=%s&t=1&type=0", id, cid), cookie)).getInteger("code") == 200;
+            return JSON.parseObject(NeteaseMusicUtils.sendByGetUrl(String.format("/comment/like?id=%s&cid=%s&t=1&type=0", id, cid), cookie)).getInteger("code") == 200;
         }
     }
 
